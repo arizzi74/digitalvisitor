@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?><record_update table="sys_sg_write_back_action_item">
+    <sys_sg_write_back_action_item action="INSERT_OR_UPDATE">
+        <description/>
+        <execution_script/>
+        <name>Delete (Visitor)</name>
+        <query_condition/>
+        <sys_class_name>sys_sg_write_back_action_item</sys_class_name>
+        <sys_created_by>admin</sys_created_by>
+        <sys_created_on>2020-03-01 19:41:05</sys_created_on>
+        <sys_id>ce8f64691bdb08108c06c95e0d4bcbdc</sys_id>
+        <sys_mod_count>0</sys_mod_count>
+        <sys_name>Delete (Visitor)</sys_name>
+        <sys_package display_value="Digital Visitor" source="x_snc_digital_visi">3bfba0a51bdb08108c06c95e0d4bcb07</sys_package>
+        <sys_policy/>
+        <sys_scope display_value="Digital Visitor">3bfba0a51bdb08108c06c95e0d4bcb07</sys_scope>
+        <sys_update_name>sys_sg_write_back_action_item_ce8f64691bdb08108c06c95e0d4bcbdc</sys_update_name>
+        <sys_updated_by>admin</sys_updated_by>
+        <sys_updated_on>2020-03-01 19:41:05</sys_updated_on>
+        <table>x_snc_digital_visi_visitor</table>
+        <template/>
+        <type>delete</type>
+        <use_current_record_as_condition>true</use_current_record_as_condition>
+    </sys_sg_write_back_action_item>
+    <sys_translated_text action="delete_multiple" query="documentkey=ce8f64691bdb08108c06c95e0d4bcbdc"/>
+</record_update>
