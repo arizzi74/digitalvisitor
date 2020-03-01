@@ -8,7 +8,7 @@
         <element attributes="encode_utf8=false" label="Host" max_length="32" name="host" reference="sys_user" type="reference"/>
         <element attributes="edge_encryption_enabled=true" label="Last Name" max_length="255" name="last_name" type="string"/>
         <element attributes="edge_encryption_enabled=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
-        <element label="Photo ID" max_length="65536" name="photo_id" type="html"/>
+        <element label="Photo ID" max_length="65536" name="photo_id" type="user_image"/>
         <element label="Returning" max_length="40" name="returning" type="boolean"/>
         <index name="index">
             <element name="host"/>

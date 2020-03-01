@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?><database>
     <element label="Pass" max_length="40" name="x_snc_digital_visi_pass" type="collection">
+        <element default="False" display="true" label="Active" max_length="40" name="active" type="boolean"/>
         <element attributes="encode_utf8=false" label="Assignee" max_length="32" name="assignee" reference="x_snc_digital_visi_visitor" type="reference"/>
         <element attributes="edge_encryption_enabled=true" label="Pass ID" max_length="255" name="pass_id" type="string"/>
         <index name="index">
