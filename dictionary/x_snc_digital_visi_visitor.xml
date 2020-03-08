@@ -12,7 +12,13 @@
         <element attributes="edge_encryption_enabled=true" label="Last Name" max_length="255" name="last_name" type="string"/>
         <element attributes="edge_encryption_enabled=true" default="javascript:global.getNextObjNumberPadded();" label="Number" max_length="40" name="number" type="string"/>
         <element label="Photo ID" max_length="65536" name="photo_id" type="user_image"/>
-        <element label="Position" max_length="40" name="position" read_only="true" type="string"/>
+        <element choice="1" label="Position" max_length="40" name="position" type="string">
+            <choice>
+                <element inactive_on_update="false" label="Expected" sequence="0" value="Expected"/>
+                <element inactive_on_update="false" label="Entered" sequence="1" value="Entered"/>
+                <element inactive_on_update="false" label="Exited" sequence="2" value="Exited"/>
+            </choice>
+        </element>
         <element label="Returning" max_length="40" name="returning" type="boolean"/>
         <index name="index">
             <element name="host"/>

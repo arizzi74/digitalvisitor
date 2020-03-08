@@ -10,68 +10,130 @@
         <operation_script><![CDATA[(function process(/*RESTAPIRequest*/ request, /*RESTAPIResponse*/ response) {
 	
 	var pass_id = request.pathParams.pass_id;
+	var action = request.pathParams.action;
 	var dataItems = [];
 	var hdrs = {},
         record_limit = 1,
         pass_gr = new GlideRecord('x_snc_digital_visi_pass'),
 		visi_gr = new GlideRecord('x_snc_digital_visi_visitor'),
-		pass_validity = '', 
-		message = '', 
+		position, t_in, t_out,
+		pass_validity = 'error', 
+		message = '',
+		allowed = false,
 		u_fn = '', 
-		u_ln = '';
-	
-	/*
-	var visitor_name = 'Mario';
-	var visitor_lastname = 'Rossi';
-	var pass_status = true;
-	*/
+		u_ln = '',
+		t_now = new GlideDateTime(),
+		t_diff = new GlideDateTime();
 	
     hdrs['Content-Type'] = 'application/json';
     response.setStatus(200);
     response.setHeaders(hdrs);
 	
-	pass_gr.addQuery('pass_id', pass_id);
-    pass_gr.setLimit(record_limit);
-    pass_gr.query();
-	
-	if( pass_gr.hasNext() ) {
-		pass_gr.next();
-		visi_gr.addQuery('sys_id', pass_gr.getValue('assignee'));
-		visi_gr.query();
-		if( visi_gr.hasNext() ) {
-			visi_gr.next();
-			u_fn = visi_gr.getValue('first_name');
-			u_ln = visi_gr.getValue('last_name');
-			if( pass_gr.getValue('active') ){
-				pass_validity = 'valid';
+	if ( ['check', 'enter', 'exit'].indexOf(action) >= 0 ) {
+		
+
+		pass_gr.addQuery('pass_id', pass_id);
+		pass_gr.setLimit(record_limit);
+		pass_gr.query();
+
+
+		if( pass_gr.hasNext() ) {
+			pass_gr.next();
+			visi_gr.addQuery('sys_id', pass_gr.getValue('assignee'));
+			visi_gr.query();
+			if( visi_gr.hasNext() ) {
+				visi_gr.next();
+				u_fn = visi_gr.getValue('first_name');
+				u_ln = visi_gr.getValue('last_name');
+				t_in = visi_gr.getValue('entry');
+				t_out = visi_gr.getValue('exit');
+
+				if( pass_gr.getValue('active') ){
+					pass_validity = 'valid';
+					position = visi_gr.getValue('position');
+					switch (position) {
+						case 'Expected':
+							t_diff = GlideDateTime.subtract( t_now, GlideDateTime(t_in));
+							if ( t_diff.getNumericValue() > 0 ) {
+								message = 'Pass not yet valid for entry.';
+								break;
+							}
+							t_diff = GlideDateTime.subtract( t_now, GlideDateTime(t_out));
+							if ( t_diff.getNumericValue() < 0 ) {
+								message = 'This pass expired.';
+								break;
+							}
+							if ( action == 'exit' ) {
+								// Action is exit
+								message = 'You still have to enter.';
+								break;
+							}
+							allowed = true;
+							//message = 'Welcome ' + u_fn + '!';
+							message = 'Enjoy your stay.';
+							if ( action == 'enter' ) {
+								// Action is enter
+								visi_gr.setValue('actual_entry', t_now);
+								visi_gr.setValue('position', 'Entered');
+								visi_gr.update();
+							}
+							break;
+						case 'Entered':
+							if ( action == 'enter' ) {
+								message = 'You already entered.';
+								break;
+							}
+							allowed = true;
+							//message = 'Goodbye ' + u_fn + '!';
+							message = 'We hope you enjoyed your stay.';
+							if ( action == 'exit' ) {
+								visi_gr.setValue('actual_exit', t_now);
+								visi_gr.setValue('position', 'Exited');
+								visi_gr.update();
+							}
+							break;	
+						case 'Exited':
+							message = 'Your visit has ended.';
+							break;
+						default:
+							message = 'Invalid visitor data.';
+					}
+
+				}
+				else {
+					pass_validity = 'disabled';
+					message = 'This pass is disabled.';
+				}
 			}
 			else {
-				pass_validity = 'disabled';
+				pass_validity = 'unassigned';
+				message = 'This pass is not currently assigned';
 			}
 		}
 		else {
-			pass_validity = 'unassigned';
+			pass_validity = 'invalid';
+			message = 'This pass is invalid';
 		}
 	}
-	else {
-		pass_validity = 'invalid';
-	}
+	
 	
     dataItems.push({
 		pass_id: pass_id,
 		status: pass_validity,
+		position: position,
 		firstname: u_fn,
 		lastname: u_ln,
+		allowed: allowed,
 		message: message
 	});
 
 	return dataItems;
 	
 })(request, response);]]></operation_script>
-        <operation_uri>/api/x_snc_digital_visi/validate/pass/{pass_id}</operation_uri>
+        <operation_uri>/api/x_snc_digital_visi/validate/pass/{action}/{pass_id}</operation_uri>
         <produces>application/json,application/xml,text/xml</produces>
         <produces_customized>false</produces_customized>
-        <relative_path>/pass/{pass_id}</relative_path>
+        <relative_path>/pass/{action}/{pass_id}</relative_path>
         <request_example/>
         <requires_acl_authorization>false</requires_acl_authorization>
         <requires_authentication>true</requires_authentication>
@@ -81,14 +143,14 @@
         <sys_created_by>admin</sys_created_by>
         <sys_created_on>2020-03-01 20:19:04</sys_created_on>
         <sys_id>041434ad1bdb08108c06c95e0d4bcb7b</sys_id>
-        <sys_mod_count>33</sys_mod_count>
+        <sys_mod_count>58</sys_mod_count>
         <sys_name>pass</sys_name>
         <sys_package display_value="Digital Visitor" source="x_snc_digital_visi">3bfba0a51bdb08108c06c95e0d4bcb07</sys_package>
         <sys_policy/>
         <sys_scope display_value="Digital Visitor">3bfba0a51bdb08108c06c95e0d4bcb07</sys_scope>
         <sys_update_name>sys_ws_operation_041434ad1bdb08108c06c95e0d4bcb7b</sys_update_name>
         <sys_updated_by>admin</sys_updated_by>
-        <sys_updated_on>2020-03-02 19:58:28</sys_updated_on>
+        <sys_updated_on>2020-03-08 18:18:31</sys_updated_on>
         <web_service_definition display_value="validate">a5d370ad1bdb08108c06c95e0d4bcb1c</web_service_definition>
         <web_service_version/>
     </sys_ws_operation>
